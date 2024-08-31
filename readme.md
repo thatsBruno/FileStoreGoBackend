@@ -13,3 +13,7 @@
 - Test and deploy
     - go-test
     - Vercel/Netlify
+
+
+Bugs:
+    - Save  file currently saves file, should download file to server and save file path

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"go-api/db"
 	"go-api/models"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -40,35 +39,20 @@ func deleteFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func saveFile(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusBadRequest)
-		return
-	}
-
 	var file models.File
-
-	fileData, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Fatal(err)
+	if err := json.NewDecoder(r.Body).Decode(&file); err != nil {
+		log.Printf("Error decoding JSON: %v", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	err = r.ParseForm()
-	if err != nil {
-		http.Error(w, "Error parsing form", http.StatusBadRequest)
-		return
-	}
-	file.FileName = r.FormValue("file_name")
-	file.Data = fileData
-	file.OwnerID = 2
 
 	if err := db.SaveFileToDb(&file); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	json.NewEncoder(w).Encode(file)
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("File uploaded successfully"))
 }
 
 func getFiles(w http.ResponseWriter, r *http.Request) {
@@ -92,6 +76,7 @@ func getFiles(w http.ResponseWriter, r *http.Request) {
 func createUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		log.Printf("Error decoding JSON: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

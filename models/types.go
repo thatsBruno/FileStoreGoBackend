@@ -11,7 +11,7 @@ type User struct {
 
 type File struct {
 	gorm.Model
-	ID       uint `gorm:"primary_key"`
+	ID       uint
 	FileName string
 	Data     []byte
 	OwnerID  uint
