@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func UserHandlers(w http.ResponseWriter, r *http.Request) {
@@ -25,9 +26,9 @@ func UserHandlers(w http.ResponseWriter, r *http.Request) {
 // Files
 func FileHandlers(w http.ResponseWriter, r *http.Request) {
 	switch {
-	case r.Method == http.MethodGet:
+	case r.Method == http.MethodGet && strings.Contains(r.URL.Path, "file/"):
 		downloadFile(w, r)
-	case r.Method == http.MethodGet:
+	case r.Method == http.MethodGet && strings.Contains(r.URL.Path, "files/"):
 		getFiles(w, r)
 	case r.Method == http.MethodPost:
 		saveFile(w, r)
@@ -98,7 +99,7 @@ func saveFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func getFiles(w http.ResponseWriter, r *http.Request) {
-	ownerId, err := strconv.Atoi(r.PathValue("ownerid"))
+	ownerId, err := strconv.Atoi(r.PathValue("ownerId"))
 	if err != nil {
 		http.Error(w, "Invalid id passed", http.StatusBadRequest)
 		return
