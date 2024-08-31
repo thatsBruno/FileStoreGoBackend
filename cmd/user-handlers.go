@@ -26,6 +26,8 @@ func UserHandlers(w http.ResponseWriter, r *http.Request) {
 func FileHandlers(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.Method == http.MethodGet:
+		downloadFile(w, r)
+	case r.Method == http.MethodGet:
 		getFiles(w, r)
 	case r.Method == http.MethodPost:
 		saveFile(w, r)
@@ -110,6 +112,32 @@ func getFiles(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(files)
+}
+
+func downloadFile(w http.ResponseWriter, r *http.Request) {
+	fileId, err := strconv.Atoi(r.PathValue("fileId"))
+	if err != nil {
+		http.Error(w, "Missing file name", http.StatusBadRequest)
+		return
+	}
+
+	// Retrieve the file record from the database
+	file, err := db.GetFileById(uint(fileId))
+	if err != nil {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+
+	// Set the appropriate headers for file download
+	w.Header().Set("Content-Disposition", "attachment; filename="+file.FileName)
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Length", strconv.Itoa(len(file.Data)))
+
+	// Write the file data to the response
+	if _, err := w.Write(file.Data); err != nil {
+		http.Error(w, "Error writing file to response", http.StatusInternalServerError)
+		return
+	}
 }
 
 // Users

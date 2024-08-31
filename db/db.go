@@ -42,6 +42,14 @@ func GetFilesFromDb(id uint) (*[]models.File, error) {
 	return &files, result.Error
 }
 
+func GetFileById(id uint) (*models.File, error) {
+	mu.Lock()
+	defer mu.Unlock()
+	var file models.File
+	result := DB.Where(&models.File{ID: id}).First(&file)
+	return &file, result.Error
+}
+
 func CreateUser(user *models.User) error {
 	mu.Lock()
 	defer mu.Unlock()
