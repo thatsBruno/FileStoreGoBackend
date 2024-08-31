@@ -33,12 +33,13 @@ func SaveFileToDb(file *models.File) error {
 	return result.Error
 }
 
-func GetFileFromDb(id uint) (*models.File, error) {
+func GetFilesFromDb(id uint) (*[]models.File, error) {
 	mu.Lock()
 	defer mu.Unlock()
-	var file models.File
-	result := DB.First(&file, id)
-	return &file, result.Error
+	var files []models.File
+	result := DB.Where(&models.File{OwnerID: id}).Find(&files)
+
+	return &files, result.Error
 }
 
 func CreateUser(user *models.User) error {

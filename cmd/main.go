@@ -18,7 +18,7 @@ func main() {
 	mux.HandleFunc("POST /user", UserHandlers)
 	mux.HandleFunc("DELETE /user/{id}", UserHandlers)
 
-	mux.HandleFunc("GET /file/{id}", FileHandlers)
+	mux.HandleFunc("GET /files/{ownerid}", FileHandlers)
 	mux.HandleFunc("POST /file", FileHandlers)
 	mux.HandleFunc("DELETE /file/{id}", FileHandlers)
 

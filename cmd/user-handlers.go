@@ -26,7 +26,7 @@ func UserHandlers(w http.ResponseWriter, r *http.Request) {
 func FileHandlers(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.Method == http.MethodGet:
-		getFile(w, r)
+		getFiles(w, r)
 	case r.Method == http.MethodPost:
 		saveFile(w, r)
 	case r.Method == http.MethodDelete:
@@ -53,8 +53,13 @@ func saveFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = r.ParseForm()
+	if err != nil {
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		return
+	}
+	file.FileName = r.FormValue("file_name")
 	file.Data = fileData
-	file.FileName = r.URL.Query().Get("file_name")
 	file.OwnerID = 2
 
 	if err := db.SaveFileToDb(&file); err != nil {
@@ -66,20 +71,21 @@ func saveFile(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("File uploaded successfully"))
 }
 
-func getFile(w http.ResponseWriter, r *http.Request) {
-	ownerId, err := strconv.Atoi(r.PathValue("id"))
+func getFiles(w http.ResponseWriter, r *http.Request) {
+	ownerId, err := strconv.Atoi(r.PathValue("ownerid"))
 	if err != nil {
 		http.Error(w, "Invalid id passed", http.StatusBadRequest)
 		return
 	}
-	file, err := db.GetFileFromDb(uint(ownerId))
+	files, err := db.GetFilesFromDb(uint(ownerId))
 
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(files)
 }
 
 // Users
