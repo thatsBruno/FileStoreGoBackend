@@ -17,18 +17,29 @@ var (
 
 func InitDatabase() {
 	var err error
-	DB, err = gorm.Open(sqlite.Open("user.db"), &gorm.Config{})
+	DB, err = gorm.Open(sqlite.Open("files.db"), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
-	// Migrate the schema
-	DB.AutoMigrate(&models.User{})
+	// DB.AutoMigrate(&models.User{})
+	DB.AutoMigrate(&models.File{})
 }
 
-// TODO
-// func UploadFileToDb(){}
-// func DownloadFileFromDb(){}
+func SaveFileToDb(file *models.File) error {
+	mu.Lock()
+	defer mu.Unlock()
+	result := DB.Create(&file)
+	return result.Error
+}
+
+func GetFileFromDb(id uint) (*models.File, error) {
+	mu.Lock()
+	defer mu.Unlock()
+	var file models.File
+	result := DB.First(&file, id)
+	return &file, result.Error
+}
 
 func CreateUser(user *models.User) error {
 	mu.Lock()

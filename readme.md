@@ -6,8 +6,8 @@
 - Design the application architecture
 - Implement the file handling in Go
     - Auth
-    - Upload
-    - Download
+    - Upload files
+    - Download files
     - Share files
 - Implement the frontend in TypeScript
 - Test and deploy

@@ -14,9 +14,13 @@ func main() {
 	db.InitDatabase()
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("POST /user", UserHandlers)
 	mux.HandleFunc("GET /user/{id}", UserHandlers)
+	mux.HandleFunc("POST /user", UserHandlers)
 	mux.HandleFunc("DELETE /user/{id}", UserHandlers)
+
+	mux.HandleFunc("GET /file/{id}", FileHandlers)
+	mux.HandleFunc("POST /file", FileHandlers)
+	mux.HandleFunc("DELETE /file/{id}", FileHandlers)
 
 	server := &http.Server{
 		Addr:    ":4000",
