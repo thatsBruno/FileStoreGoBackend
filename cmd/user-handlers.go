@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"go-api/db"
 	"go-api/models"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -49,21 +50,49 @@ func deleteFile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// takes request as form-data
 func saveFile(w http.ResponseWriter, r *http.Request) {
-	var file models.File
-	if err := json.NewDecoder(r.Body).Decode(&file); err != nil {
-		log.Printf("Error decoding JSON: %v", err)
+	name := r.FormValue("Name")
+	log.Println("File Name:", name)
+
+	ownerId, err := strconv.Atoi(r.FormValue("OwnerId"))
+	if err != nil {
+		log.Println("Error converting OwnerId:", err)
+		http.Error(w, "Invalid OwnerId", http.StatusBadRequest)
+		return
+	}
+	log.Println("Owner ID:", ownerId)
+
+	file, _, err := r.FormFile("File")
+	if err != nil {
+		log.Println("Error retrieving file:", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	defer file.Close()
 
-	if err := db.SaveFileToDb(&file); err != nil {
+	fileBytes, err := io.ReadAll(file)
+	if err != nil {
+		log.Println("Error reading file:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	log.Println("File size:", len(fileBytes))
+
+	fileRecord := models.File{
+		FileName: name,
+		Data:     fileBytes,
+		OwnerID:  uint(ownerId),
+	}
+
+	if err := db.SaveFileToDb(&fileRecord); err != nil {
+		log.Println("Error saving file to database:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	json.NewEncoder(w).Encode(file)
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("File uploaded successfully!"))
 }
 
 func getFiles(w http.ResponseWriter, r *http.Request) {
