@@ -20,7 +20,7 @@ func main() {
 
 	mux.HandleFunc("GET /files/{ownerid}", FileHandlers)
 	mux.HandleFunc("POST /file", FileHandlers)
-	mux.HandleFunc("DELETE /file/{id}", FileHandlers)
+	mux.HandleFunc("DELETE /file/{fileid}", FileHandlers)
 
 	server := &http.Server{
 		Addr:    ":4000",

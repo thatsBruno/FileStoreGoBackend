@@ -35,7 +35,18 @@ func FileHandlers(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteFile(w http.ResponseWriter, r *http.Request) {
-	panic("unimplemented")
+	fileid, err := strconv.Atoi(r.PathValue("fileid"))
+	if err != nil {
+		http.Error(w, "Invalid id passed", http.StatusBadRequest)
+		return
+	}
+
+	if err := db.DeleteFile(uint(fileid)); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func saveFile(w http.ResponseWriter, r *http.Request) {

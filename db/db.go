@@ -63,3 +63,10 @@ func DeleteUser(id uint) error {
 	result := DB.Delete(&models.User{}, id)
 	return result.Error
 }
+
+func DeleteFile(id uint) error {
+	mu.Lock()
+	defer mu.Unlock()
+	result := DB.Unscoped().Delete(&models.File{}, id)
+	return result.Error
+}
