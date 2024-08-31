@@ -10,8 +10,7 @@
     - Download files
     - Share files
 - Implement the frontend in TypeScript
-- Test and deploy
-    - go-test
+- Deploy
     - Vercel/Netlify
 
 
