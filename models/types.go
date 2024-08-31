@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	ID       uint `gorm:"not null;auto_increment=false;primary_key;unique_index:composite_index"`
+	ID       uint
 	Username string
 	Email    string
 }

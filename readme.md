@@ -15,4 +15,3 @@
 
 
 Bugs:
-    - Both GET/file requests missmatch eventhough path is different

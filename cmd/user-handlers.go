@@ -23,10 +23,10 @@ func UserHandlers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Files
 func FileHandlers(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.Method == http.MethodGet && strings.Contains(r.URL.Path, "file/"):
+		// Files
 		downloadFile(w, r)
 	case r.Method == http.MethodGet && strings.Contains(r.URL.Path, "files/"):
 		getFiles(w, r)
@@ -38,6 +38,7 @@ func FileHandlers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Files
 func deleteFile(w http.ResponseWriter, r *http.Request) {
 	fileid, err := strconv.Atoi(r.PathValue("fileid"))
 	if err != nil {
