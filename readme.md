@@ -1,17 +1,8 @@
-# File Sharing Platform (DataDock): 
-### Create a secure file sharing platform where users can upload, download, and share files. Use Go for the file handling and TypeScript for the frontend.
+# Backend for a application that stores and retrieves files in Go (DataDock): 
+- Using one of the methods for storing data, in this small project I utilize a sqlite db to store a user table together with their files.
 
-### Roadmap:
+## Functionality
 
-- Design the application architecture
 - Implement the file handling in Go
-    - Auth
     - Upload files
     - Download files
-    - Share files
-- Implement the frontend 
-- Deploy
-    - Vercel/Netlify
-
-
-Bugs:
